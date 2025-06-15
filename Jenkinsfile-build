@@ -148,11 +148,12 @@ def email_subject() {
 
 def email_content() {
     return '''이 이메일은 중요한 것이여!!
+}
 
 ${DEFAULT_CONTENT}
 
 '''
-}
+
 
 def custom_msg(status) {
     return " $status: Job [${env.JOB_NAME}] Logs path: ${env.BUILD_URL}/consoleText"

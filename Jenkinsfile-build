@@ -101,7 +101,7 @@ pipeline {
         stage('SonarScanner') {
             steps {
                 when {
-                    environment name: "${params.BRANCH}", value: "origin/main"
+                    branch "**/main"
                 }
                 // sonarqube 환경하에서, 실행
                 withSonarQubeEnv("sonarqube-server") {

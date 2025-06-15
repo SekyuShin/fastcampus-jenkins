@@ -100,10 +100,10 @@ pipeline {
 
         stage('SonarScanner') {
             steps {
-                echo "Check branch ${branch}"
-                when {
-                    branch 'origin/main' // 'origin/main' 브랜치인 경우 실행
-                }
+                echo "Check branch |${branch}|"
+                //when {
+                //    branch 'origin/main' // 'origin/main' 브랜치인 경우 실행
+               //}
                 echo "SonarScanner start"
                 // sonarqube 환경하에서, 실행
                 withSonarQubeEnv("sonarqube-server") {

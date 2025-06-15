@@ -103,6 +103,7 @@ pipeline {
                 when {
                     branch "**/main"
                 }
+                echo "SonarScanner start"
                 // sonarqube 환경하에서, 실행
                 withSonarQubeEnv("sonarqube-server") {
                     sh """

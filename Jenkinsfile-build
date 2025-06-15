@@ -61,7 +61,7 @@ pipeline {
                 }
             }
         }
-        stage('Checkout') {
+        /*stage('Checkout') {
             steps {
                 checkout scmGit(
                         branches: [[name: 'origin/main']],
@@ -75,7 +75,7 @@ pipeline {
                         extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'projects/spring-app']]]]
                 )
             }
-        }
+        }*/
 
         stage('Build') {
             steps {

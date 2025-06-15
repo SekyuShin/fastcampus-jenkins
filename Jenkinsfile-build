@@ -1,3 +1,4 @@
+
 pipeline {
     // 어떠한 에이전트에서도 실행 가능함을 표현
     agent any
@@ -18,8 +19,12 @@ pipeline {
         // 빌드를 5개만 유지
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '5', numToKeepStr: '5')
         // github 프로젝트 설정
-        githubProjectProperty(displayName: '', projectUrlStr: 'https://github.com/fastcampus-jenkins/fastcampus-jenkins')
+        githubProjectProperty(displayName: '', projectUrlStr: 'https://github.com/SekyuShin/fastcampus-jenkins')
     }
+
+    // parameters {
+    //     booleanParam(defaultValue: true, description: '배포 포함 여부', name: 'DEPLOY_ENABLED')
+    // }
 
 
     // stages > stage > steps 순으로 구성
@@ -56,7 +61,21 @@ pipeline {
                 }
             }
         }
-       
+        stage('Checkout') {
+            steps {
+                checkout scmGit(
+                        branches: [[name: 'origin/main']],
+                        // branches: [[name: "${params.BRANCH}"]],
+                        userRemoteConfigs: [[
+                            // credential id 는 http://localhost:8080/pipeline-syntax/ 에서 checkout step 생성을 통해 확인 가능
+                            credentialsId: 'github-ssh',
+                            // credentialsId: '89e12990-2b45-456d-98b3-04e549b01d22',
+                            url: 'git@github.com:SekyuShin/fastcampus-jenkins.git']
+                        ],
+                        extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'projects/spring-app']]]]
+                )
+            }
+        }
 
         stage('Build') {
             steps {
@@ -72,9 +91,6 @@ pipeline {
 
 
         stage('SonarScanner') {
-            when {
-                environment name: "GIT_BRANCH", value: "origin/main"
-            }
             steps {
                 // sonarqube 환경하에서, 실행
                 withSonarQubeEnv("sonarqube-server") {
@@ -104,12 +120,10 @@ pipeline {
             junit '**/test-results/**/*.xml'
             jacoco sourcePattern: '**/src/main/kotlin'
             mineRepository()
-            emailext attachLog: true, body: email_content(), subject: email_subject(), to: 'junoyoon@gmail.com'
-            slackSend channel: "#jenkins", message: "${custom_msg(currentBuild.currentResult)}"
-
+            emailext attachLog: true, body: email_content(), subject: email_subject(), to: 'doublsesk0810@gmail.com'
         }
 
-        success {
+         success {
             archiveArtifacts artifacts: 'projects/spring-app/build/libs/*-SNAPSHOT.jar'
             script {
                 if (params.DEPLOY_ENABLED == true) {
@@ -124,7 +138,6 @@ pipeline {
         }
     }
 }
-
 
 def email_subject() {
     return '빌드통지!! - ${DEFAULT_SUBJECT}'
@@ -142,7 +155,6 @@ def custom_msg(status) {
     return " $status: Job [${env.JOB_NAME}] Logs path: ${env.BUILD_URL}/consoleText"
 }
 
-
 def groovy_script() {
   return '''if (BRANCH == "") {
       return "origin/main 가 빌드 됩니다."
@@ -150,4 +162,3 @@ def groovy_script() {
       return "$BRANCH 가 빌드 됩니다."
   }'''
 }
-

@@ -82,7 +82,7 @@ pipeline {
             steps {
                 echo "Current env.GIT_BRANCH is: ${env.GIT_BRANCH}"
                 echo "Current params.BRANCH is: ${params.BRANCH}"
-                echo "Current BRANCH_NAME is: "$BRANCH_NAME"
+                echo "Current BRANCH_NAME is: $BRANCH_NAME"
             }
         }
         stage('Build') {

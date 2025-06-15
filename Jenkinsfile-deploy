@@ -1,3 +1,4 @@
+
 pipeline {
     // 어떠한 에이전트에서도 실행 가능함을 표현
     agent any
@@ -17,7 +18,7 @@ pipeline {
 
     // stages > stage > steps 순으로 구성
     stages {
-          stage("Checking Deployment") {
+        stage("Checking Deployment") {
               when {
                   environment name: 'ARE_YOU_SURE', value: 'false'
               }

@@ -78,7 +78,13 @@ pipeline {
         //        )
         //    }
         //}
-
+        stage('Check Branch Variable') {
+            steps {
+                echo "Current env.GIT_BRANCH is: ${env.GIT_BRANCH}"
+                echo "Current params.BRANCH is: ${params.BRANCH}"
+                echo "Current BRANCH_NAME is: "$BRANCH_NAME"
+            }
+        }
         stage('Build') {
             steps {
               // dir 은 디렉토리 이동
@@ -95,7 +101,7 @@ pipeline {
         stage('SonarScanner') {
             steps {
                 when {
-                    environment name: "GIT_BRANCH", value: "origin/main"
+                    environment name: "${params.BRANCH}", value: "origin/main"
                 }
                 // sonarqube 환경하에서, 실행
                 withSonarQubeEnv("sonarqube-server") {
